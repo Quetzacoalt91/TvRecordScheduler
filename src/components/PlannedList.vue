@@ -1,12 +1,22 @@
 <template>
-  <div class="hello">
+  <div class="col">
     <h2>Programmed recordings</h2>
-    <ul>
-      <li v-for="(program, index) in programs" v-bind:key="index">
-        {{ program.channel }} - From {{ program.from }} to {{ program.to }}
-        <button class="btn btn-sm btn-outline-danger" v-on:click="deleteProgram(index)">X</button>
-      </li>
-    </ul>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Channel</th>
+          <th scope="col">Time</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tr v-for="(program, index) in programs" v-bind:key="index">
+        <td>{{ program.channel }}</td>
+        <td>{{ program.from }} - {{ program.to }}</td>
+        <td>
+          <button class="btn btn-sm btn-danger" v-on:click="deleteProgram(index)">X</button>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 

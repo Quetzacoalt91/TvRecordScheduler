@@ -14,6 +14,9 @@ export default {
     ],
   },
   mutations: {
+    addProgram(state, payload) {
+      state.programs.push(payload.form);
+    },
     deleteProgram(state, payload) {
       state.programs.splice(payload.index, 1);
     },
