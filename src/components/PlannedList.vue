@@ -9,7 +9,7 @@
           <th scope="col">Actions</th>
         </tr>
       </thead>
-      <tr v-for="(program, index) in programs" v-bind:key="index">
+      <tr v-for="(program, index) in schedule" v-bind:key="index">
         <td>{{ program.channel }}</td>
         <td>{{ program.from }} - {{ program.to }}</td>
         <td>
@@ -24,8 +24,8 @@
 export default {
   name: 'PlannedList',
   computed: {
-    programs() {
-      return this.$store.state.programs;
+    schedule() {
+      return this.$store.state.schedule;
     },
   },
   methods: {

@@ -1,6 +1,6 @@
 export default {
   state: {
-    programs: [
+    schedule: [
       {
         channel: 'BBC One',
         from: '15:00',
@@ -15,10 +15,10 @@ export default {
   },
   mutations: {
     addProgram(state, payload) {
-      state.programs.push(payload.form);
+      state.schedule.push(payload.form);
     },
     deleteProgram(state, payload) {
-      state.programs.splice(payload.index, 1);
+      state.schedule.splice(payload.index, 1);
     },
   },
 };
