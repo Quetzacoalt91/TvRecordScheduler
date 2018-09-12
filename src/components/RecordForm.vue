@@ -42,6 +42,11 @@ export default {
       );
     },
   },
+  created() {
+    this.$store.dispatch('loadGuide', {
+      date: new Date().toISOString().slice(0, 10),
+    });
+  },
 };
 </script>
 
