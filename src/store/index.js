@@ -20,7 +20,7 @@ export default {
   },
   mutations: {
     addProgram(state, payload) {
-      state.schedule.push(payload.form);
+      state.schedule.push(Object.assign({}, payload.form));
     },
     deleteProgram(state, payload) {
       state.schedule.splice(payload.index, 1);
@@ -30,13 +30,19 @@ export default {
     },
     updateChannels(state, payload) {
       payload.channels.forEach((channel) => {
-        state.channels = Object.assign(state.channels, { [channel.id]: channel });
+        state.channels = Object.assign(state.channels, { [channel.number]: channel });
       });
       state.guideLoaded = true;
     },
   },
   actions: {
-    loadGuide({ commit }, payload) {
+    loadGuide({ commit, state }, payload) {
+      // If guide existing, no need to go further
+      if (state.guide[payload.date] !== undefined) {
+        state.guideLoaded = true;
+        return;
+      }
+      state.guideLoaded = false;
       const url = `http://localhost:3000/https://awsbrain.freeview.co.uk/programmes/london?date=${payload.date}`;
       Vue.http.get(url).then((response) => {
         commit('setGuidePrograms', {
