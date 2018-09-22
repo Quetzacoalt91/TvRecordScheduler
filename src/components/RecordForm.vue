@@ -4,9 +4,13 @@
     <form v-on:submit.prevent="addProgram" class="form-group">
       <div class="form-group">
         <label for="formRecordChannel">Channel</label>
-        <input v-model="form.channel" required type="text" placeholder="E4"
-          id="formRecordChannel" class="form-control"
-        />
+        <p v-if="!guideLoaded">Guide is being loaded...</p>
+        <select v-else class="form-control" id="formRecordChannel" required v-model="form.channel">
+          <option value="" disabled selected>-- Select a channel --</option>
+          <option v-for="(channel, index) in channels" v-bind:key="index" :value="channel.name">
+            {{ channel.name }}
+          </option>
+        </select>
       </div>
       <div class="form-group">
         <label for="formRecordTimeStart">Start</label>
@@ -26,6 +30,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'Form',
   data() {
@@ -33,6 +39,10 @@ export default {
       form: {},
     };
   },
+  computed: {
+    ...mapState(['channels', 'guide', 'guideLoaded']),
+  },
+
   methods: {
     addProgram() {
       this.$store.commit(
