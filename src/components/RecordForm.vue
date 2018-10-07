@@ -14,7 +14,10 @@
       </div>
       <div class="form-group">
         <label for="formRecordChannel">Channel</label>
-        <p v-if="!guideLoaded">Guide is being loaded...</p>
+        <div v-if="api.guideError" class="alert alert-danger">
+          Guide could not be loaded
+        </div>
+        <p v-if="!api.guideLoaded">Guide is being loaded...</p>
         <select v-else class="form-control" id="formRecordChannel" required
           v-model="form.channel"
         >
@@ -26,19 +29,22 @@
           </option>
         </select>
       </div>
-      <div class="form-group">
+      <!--<div class="form-group">
         <label for="formRecordTimeStart">Manual configuration</label>
         <input type="checkbox" v-model="manualMode" />
-      </div>
-      <div v-if="!manualMode && guideLoaded" class="form-group">
+      </div>-->
+      <div v-if="!manualMode && api.guideLoaded" class="form-group">
         <label for="formRecordTimeStart">Program</label>
-        <select class="form-control">
-          <option v-for="(show, index) in shows" v-bind:key="index">
-             {{ show.startTime }} - {{ show.title }}
+        <select class="form-control" v-model="form.from">
+          <option value="" disabled selected>-- Select a show --</option>
+          <option v-for="(show, index) in shows" v-bind:key="index"
+            :value="show.startTimestamp"
+          >
+            {{ show.startTime }} - {{ show.title }}
           </option>
         </select>
       </div>
-      <div v-if="manualMode" class="form-group">
+      <!--<div v-if="manualMode" class="form-group">
         <label for="formRecordTimeStart">Start</label>
         <input v-model="form.from" required type="text" placeholder="13:37"
           id="formRecordTimeStart" class="form-control"
@@ -49,7 +55,7 @@
         <input v-model="form.to" type="text" placeholder="16:20"
           id="formRecordTimeEnd" class="form-control"
         />
-      </div>
+      </div>-->
       <button class="btn btn-primary">Save</button>
     </form>
   </div>
@@ -72,20 +78,18 @@ export default {
   },
   computed: {
     shows() {
-      console.log(`Finding shows for ${this.form.channel} at ${this.form.date}`);
       const channels = this.$store.state.guide[this.form.date] || [];
       const length = channels.length;
       let i;
       for (i = 0; i < length; i += 1) {
         const channel = channels[i];
         if (this.form.channel === channel.number) {
-          console.log(channel.shows);
           return channel.shows;
         }
       }
       return [];
     },
-    ...mapState(['channels', 'guide', 'guideLoaded']),
+    ...mapState(['channels', 'guide', 'api']),
   },
 
   methods: {

@@ -16,7 +16,10 @@ export default {
     ],
     channels: {},
     guide: {},
-    guideLoaded: false,
+    api: {
+      guideLoaded: false,
+      guideError: false,
+    },
   },
   mutations: {
     addProgram(state, payload) {
@@ -32,17 +35,17 @@ export default {
       payload.channels.forEach((channel) => {
         state.channels = Object.assign(state.channels, { [channel.number]: channel });
       });
-      state.guideLoaded = true;
+      state.api.guideLoaded = true;
     },
   },
   actions: {
     loadGuide({ commit, state }, payload) {
       // If guide existing, no need to go further
       if (state.guide[payload.date] !== undefined) {
-        state.guideLoaded = true;
+        state.api.guideLoaded = true;
         return;
       }
-      state.guideLoaded = false;
+      state.api.guideLoaded = false;
       const url = `http://localhost:3000/https://awsbrain.freeview.co.uk/programmes/london?date=${payload.date}`;
       Vue.http.get(url).then((response) => {
         commit('setGuidePrograms', {
@@ -52,8 +55,8 @@ export default {
         commit('updateChannels', {
           channels: response.body.listings,
         });
-      }).catch((response) => {
-        console.error(`Cannot retrieve data from ${url}`, response);
+      }).catch(() => {
+        state.api.guideError = true;
       });
     },
   },
