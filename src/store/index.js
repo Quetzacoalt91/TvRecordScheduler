@@ -5,13 +5,13 @@ export default {
     schedule: [
       {
         channel: 'BBC One',
-        from: '15:00',
-        to: '16:30',
+        from: 1538820000000,
+        duration: '60',
       },
       {
         channel: 'E4',
-        from: '20:02',
-        to: '17:00',
+        from: 1539165600000,
+        duration: '85',
       },
     ],
     channels: {},

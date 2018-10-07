@@ -35,16 +35,16 @@
       </div>-->
       <div v-if="!manualMode && api.guideLoaded" class="form-group">
         <label for="formRecordTimeStart">Program</label>
-        <select class="form-control" v-model="form.from">
+        <select class="form-control" v-model="showId">
           <option value="" disabled selected>-- Select a show --</option>
           <option v-for="(show, index) in shows" v-bind:key="index"
-            :value="show.startTimestamp"
+            :value="index"
           >
             {{ show.startTime }} - {{ show.title }}
           </option>
         </select>
       </div>
-      <!--<div v-if="manualMode" class="form-group">
+      <div v-if="manualMode" class="form-group">
         <label for="formRecordTimeStart">Start</label>
         <input v-model="form.from" required type="text" placeholder="13:37"
           id="formRecordTimeStart" class="form-control"
@@ -52,10 +52,10 @@
       </div>
       <div v-if="manualMode" class="form-group">
         <label for="formRecordTimeEnd">End</label>
-        <input v-model="form.to" type="text" placeholder="16:20"
+        <input v-model="form.duration" type="text" placeholder="60"
           id="formRecordTimeEnd" class="form-control"
         />
-      </div>-->
+      </div>
       <button class="btn btn-primary">Save</button>
     </form>
   </div>
@@ -73,6 +73,7 @@ export default {
         channel: 0,
       },
       manualMode: false,
+      showId: 0,
       dates: [],
     };
   },
@@ -89,11 +90,26 @@ export default {
       }
       return [];
     },
+    duration() {
+      return this.$store.state.guide[this.form.date][this.form.channel]
+        .shows[this.showId]
+        .duration;
+    },
+    startTime() {
+      return this.$store.state.guide[this.form.date][this.form.channel]
+        .shows[this.showId]
+        .startTimestamp;
+    },
     ...mapState(['channels', 'guide', 'api']),
   },
 
   methods: {
     addProgram() {
+      if (!this.manualMode && this.showId) {
+        this.form.from = 1000 * this.startTime;
+        this.form.duration = this.duration;
+      }
+
       this.$store.commit(
         'addProgram', {
           form: this.form,

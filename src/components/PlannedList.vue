@@ -5,13 +5,15 @@
       <thead>
         <tr>
           <th scope="col">Channel</th>
-          <th scope="col">Time</th>
+          <th scope="col">Start Time</th>
+          <th scope="col">Duration (min)</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
       <tr v-for="(program, index) in schedule" v-bind:key="index">
         <td>{{ program.channel }}</td>
-        <td>{{ program.from }} - {{ program.to }}</td>
+        <td>{{ new Date(program.from).toLocaleString() }}</td>
+        <td>{{ program.duration }}</td>
         <td>
           <button class="btn btn-sm btn-danger" v-on:click="deleteProgram(index)">X</button>
         </td>
