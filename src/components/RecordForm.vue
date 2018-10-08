@@ -82,11 +82,13 @@ export default {
     shows() {
       const channels = this.$store.state.guide[this.form.date] || [];
       const length = channels.length;
+      const now = new Date();
       let i;
       for (i = 0; i < length; i += 1) {
         const channel = channels[i];
         if (this.channelId === channel.number) {
-          return channel.shows;
+          // List only shows starting after the current time
+          return channel.shows.filter(show => 1000 * show.startTimestamp > now);
         }
       }
       return [];
