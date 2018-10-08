@@ -19,7 +19,7 @@
         </div>
         <p v-if="!api.guideLoaded">Guide is being loaded...</p>
         <select v-else class="form-control" id="formRecordChannel" required
-          v-model="form.channel"
+          v-model="channelId"
         >
           <option value="" disabled selected>-- Select a channel --</option>
           <option v-for="(channel, index) in channels" v-bind:key="index"
@@ -74,6 +74,7 @@ export default {
       },
       manualMode: false,
       showId: 0,
+      channelId: 0,
       dates: [],
     };
   },
@@ -84,19 +85,22 @@ export default {
       let i;
       for (i = 0; i < length; i += 1) {
         const channel = channels[i];
-        if (this.form.channel === channel.number) {
+        if (this.channelId === channel.number) {
           return channel.shows;
         }
       }
       return [];
     },
+    channel() {
+      return this.$store.state.channels[this.channelId];
+    },
     duration() {
-      return this.$store.state.guide[this.form.date][this.form.channel]
+      return this.channel
         .shows[this.showId]
         .duration;
     },
     startTime() {
-      return this.$store.state.guide[this.form.date][this.form.channel]
+      return this.channel
         .shows[this.showId]
         .startTimestamp;
     },
@@ -105,9 +109,10 @@ export default {
 
   methods: {
     addProgram() {
-      if (!this.manualMode && this.showId) {
+      if (!this.manualMode) {
         this.form.from = 1000 * this.startTime;
         this.form.duration = this.duration;
+        this.form.channel = this.channel.name;
       }
 
       this.$store.commit(
@@ -117,7 +122,7 @@ export default {
       );
     },
     /**
-     * Loads the next 7 dates from today
+     * List the next 7 dates from today
      */
     getWeekDays() {
       const addDays = (previousDate, days) => {
