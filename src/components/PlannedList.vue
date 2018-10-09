@@ -32,12 +32,15 @@ export default {
   },
   methods: {
     deleteProgram(index) {
-      this.$store.commit(
+      this.$store.dispatch(
         'deleteProgram', {
           index,
         },
       );
     },
+  },
+  created() {
+    this.$store.dispatch('loadSchedule');
   },
 };
 </script>

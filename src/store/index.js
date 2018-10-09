@@ -1,35 +1,24 @@
 import Vue from 'vue';
 
+const dvbUrl = 'http://raspberrytv.local:3001/records';
+
 export default {
   state: {
-    schedule: [
-      {
-        channel: 'BBC One',
-        from: 1538820000000,
-        duration: '60',
-      },
-      {
-        channel: 'E4',
-        from: 1539165600000,
-        duration: '85',
-      },
-    ],
+    schedule: [],
     channels: {},
     guide: {},
     api: {
       guideLoaded: false,
       guideError: false,
+      mumudvbError: false,
     },
   },
   mutations: {
-    addProgram(state, payload) {
-      state.schedule.push(Object.assign({}, payload.form));
-    },
-    deleteProgram(state, payload) {
-      state.schedule.splice(payload.index, 1);
-    },
     setGuidePrograms(state, payload) {
       state.guide[payload.date] = payload.programs;
+    },
+    setSchedule(state, payload) {
+      state.schedule = payload.schedule;
     },
     updateChannels(state, payload) {
       payload.channels.forEach((channel) => {
@@ -57,6 +46,42 @@ export default {
         });
       }).catch(() => {
         state.api.guideError = true;
+      });
+    },
+    loadSchedule({ commit, state }) {
+      Vue.http.get(dvbUrl).then((response) => {
+        state.api.mumudvbError = false;
+        commit('setSchedule', {
+          schedule: response.body.current,
+        });
+      }).catch(() => {
+        state.api.mumudvbError = true;
+      });
+    },
+    addProgram({ commit, state }, payload) {
+      Vue.http.post(dvbUrl, payload.form).then((response) => {
+        if (response.error) {
+          state.api.mumudvbError = true;
+          return;
+        }
+        commit('setSchedule', {
+          schedule: response.body.current,
+        });
+      }).catch(() => {
+        state.api.mumudvbError = true;
+      });
+    },
+    deleteProgram({ commit, state }, payload) {
+      Vue.http.delete(`${dvbUrl}/${payload.index}`).then((response) => {
+        if (response.error) {
+          state.api.mumudvbError = true;
+          return;
+        }
+        commit('setSchedule', {
+          schedule: response.body.current,
+        });
+      }).catch(() => {
+        state.api.mumudvbError = true;
       });
     },
   },

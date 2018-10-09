@@ -97,13 +97,11 @@ export default {
       return this.$store.state.channels[this.channelId];
     },
     duration() {
-      return this.channel
-        .shows[this.showId]
+      return this.shows[this.showId]
         .duration;
     },
     startTime() {
-      return this.channel
-        .shows[this.showId]
+      return this.shows[this.showId]
         .startTimestamp;
     },
     ...mapState(['channels', 'guide', 'api']),
@@ -117,7 +115,7 @@ export default {
         this.form.channel = this.channel.name;
       }
 
-      this.$store.commit(
+      this.$store.dispatch(
         'addProgram', {
           form: this.form,
         },
