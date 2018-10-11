@@ -19,15 +19,8 @@
 </template>
 
 <script>
-import PlannedList from './PlannedList';
-import RecordForm from './RecordForm';
-
 export default {
   name: 'Home',
-  components: {
-    PlannedList,
-    RecordForm,
-  },
 };
 </script>
 
