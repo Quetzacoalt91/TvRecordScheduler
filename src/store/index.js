@@ -1,6 +1,12 @@
 import Vue from 'vue';
 
-const dvbUrl = 'http://raspberrytv.local:3001/records';
+const guideUrl = 'http://localhost:3000/https://awsbrain.freeview.co.uk/programmes/london?date=';
+const dvbUrl = 'http://raspberrytv.local:3001';
+const uris = {
+  records: '/records',
+  status: '/status',
+  stream: '/stream/',
+};
 
 export default {
   state: {
@@ -12,6 +18,12 @@ export default {
       guideError: false,
       mumudvbError: false,
     },
+    dvb: {},
+    links: {
+      records: dvbUrl + uris.records,
+      status: dvbUrl + uris.status,
+      stream: dvbUrl + uris.stream,
+    },
   },
   mutations: {
     setGuidePrograms(state, payload) {
@@ -19,6 +31,9 @@ export default {
     },
     setSchedule(state, payload) {
       state.schedule = payload.schedule;
+    },
+    setStatus(state, payload) {
+      state.dvb = payload.status;
     },
     updateChannels(state, payload) {
       payload.channels.forEach((channel) => {
@@ -35,7 +50,7 @@ export default {
         return;
       }
       state.api.guideLoaded = false;
-      const url = `http://localhost:3000/https://awsbrain.freeview.co.uk/programmes/london?date=${payload.date}`;
+      const url = guideUrl + payload.date;
       Vue.http.get(url).then((response) => {
         commit('setGuidePrograms', {
           date: payload.date,
@@ -49,7 +64,7 @@ export default {
       });
     },
     loadSchedule({ commit, state }) {
-      Vue.http.get(dvbUrl).then((response) => {
+      Vue.http.get(state.links.records).then((response) => {
         state.api.mumudvbError = false;
         commit('setSchedule', {
           schedule: response.body.current,
@@ -59,7 +74,7 @@ export default {
       });
     },
     addProgram({ commit, state }, payload) {
-      Vue.http.post(dvbUrl, payload.form).then((response) => {
+      Vue.http.post(state.links.records, payload.form).then((response) => {
         if (response.error) {
           state.api.mumudvbError = true;
           return;
@@ -72,13 +87,23 @@ export default {
       });
     },
     deleteProgram({ commit, state }, payload) {
-      Vue.http.delete(`${dvbUrl}/${payload.index}`).then((response) => {
+      Vue.http.delete(`${state.links.records}/${payload.index}`).then((response) => {
         if (response.error) {
           state.api.mumudvbError = true;
           return;
         }
         commit('setSchedule', {
           schedule: response.body.current,
+        });
+      }).catch(() => {
+        state.api.mumudvbError = true;
+      });
+    },
+    updateDvbStatus({ commit, state }) {
+      Vue.http.get(state.links.status).then((response) => {
+        state.api.mumudvbError = false;
+        commit('setStatus', {
+          status: response.body,
         });
       }).catch(() => {
         state.api.mumudvbError = true;
