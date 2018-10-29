@@ -125,18 +125,12 @@ export default {
      * List the next 7 dates from today
      */
     getWeekDays() {
-      const addDays = (previousDate, days) => {
-        const date = new Date(previousDate.valueOf());
-        date.setDate(date.getDate() + days);
-        return date;
-      };
-
       const dateArray = [];
       const startDate = new Date();
-      let currentDate = startDate;
-      while (currentDate.getDate() <= startDate.getDate() + 7) {
-        dateArray.push(new Date(currentDate).toISOString().substr(0, 10));
-        currentDate = addDays(currentDate, 1);
+      const currentDate = startDate;
+      for (let i = 0; i < 7; i = 1 + i) {
+        dateArray.push(currentDate.toISOString().substr(0, 10));
+        currentDate.setDate(1 + currentDate.getDate());
       }
       this.dates = dateArray;
     },
