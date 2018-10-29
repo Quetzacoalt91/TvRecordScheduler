@@ -66,9 +66,7 @@ export default {
     loadSchedule({ commit, state }) {
       Vue.http.get(state.links.records).then((response) => {
         state.api.mumudvbError = false;
-        commit('setSchedule', {
-          schedule: response.body.current,
-        });
+        commit('setSchedule', response.body);
       }).catch(() => {
         state.api.mumudvbError = true;
       });
@@ -79,9 +77,7 @@ export default {
           state.api.mumudvbError = true;
           return;
         }
-        commit('setSchedule', {
-          schedule: response.body.current,
-        });
+        commit('setSchedule', response.body);
       }).catch(() => {
         state.api.mumudvbError = true;
       });
@@ -92,9 +88,7 @@ export default {
           state.api.mumudvbError = true;
           return;
         }
-        commit('setSchedule', {
-          schedule: response.body.current,
-        });
+        commit('setSchedule', response.body);
       }).catch(() => {
         state.api.mumudvbError = true;
       });
