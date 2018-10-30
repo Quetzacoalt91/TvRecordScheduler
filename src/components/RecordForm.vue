@@ -29,11 +29,7 @@
           </option>
         </select>
       </div>
-      <!--<div class="form-group">
-        <label for="formRecordTimeStart">Manual configuration</label>
-        <input type="checkbox" v-model="manualMode" />
-      </div>-->
-      <div v-if="!manualMode && api.guideLoaded" class="form-group">
+      <div v-if="api.guideLoaded" class="form-group">
         <label for="formRecordTimeStart">Program</label>
         <select class="form-control" v-model="showId">
           <option value="" disabled selected>-- Select a show --</option>
@@ -43,18 +39,6 @@
             {{ show.startTime }} - {{ show.title }}
           </option>
         </select>
-      </div>
-      <div v-if="manualMode" class="form-group">
-        <label for="formRecordTimeStart">Start</label>
-        <input v-model="form.from" required type="text" placeholder="13:37"
-          id="formRecordTimeStart" class="form-control"
-        />
-      </div>
-      <div v-if="manualMode" class="form-group">
-        <label for="formRecordTimeEnd">End</label>
-        <input v-model="form.duration" type="text" placeholder="60"
-          id="formRecordTimeEnd" class="form-control"
-        />
       </div>
       <button class="btn btn-primary">Save</button>
     </form>
@@ -72,7 +56,6 @@ export default {
         date: new Date().toISOString().slice(0, 10),
         channel: 0,
       },
-      manualMode: false,
       showId: 0,
       channelId: 0,
       dates: [],
@@ -109,11 +92,9 @@ export default {
 
   methods: {
     addProgram() {
-      if (!this.manualMode) {
-        this.form.from = 1000 * this.startTime;
-        this.form.duration = this.duration;
-        this.form.channel = this.channel.name;
-      }
+      this.form.from = 1000 * this.startTime;
+      this.form.duration = this.duration;
+      this.form.channel = this.channel.name;
 
       this.$store.dispatch(
         'addProgram', {
