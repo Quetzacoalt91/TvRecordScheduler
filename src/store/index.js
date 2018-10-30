@@ -10,9 +10,10 @@ const uris = {
 
 export default {
   state: {
-    schedule: [],
-    channels: {},
-    guide: {},
+    schedule: [], // Scheduled recordings
+    records: [], // Done recordings
+    channels: {}, // Channel list
+    guide: {}, // Tv Guide per day
     api: {
       guideLoaded: false,
       guideError: false,
@@ -31,6 +32,7 @@ export default {
     },
     setSchedule(state, payload) {
       state.schedule = payload.schedule;
+      state.records = payload.records;
     },
     setStatus(state, payload) {
       state.dvb = payload.status;

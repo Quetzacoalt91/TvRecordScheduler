@@ -1,5 +1,16 @@
 <template>
   <div class="container">
+    <h2>Recorded shows</h2>
+    <div class="row">
+      <ul>
+        <li v-for="(show, index) in recordedShows"
+          v-bind:key="index"
+          v-on:click="url = streamBaseUrl + index"
+        >
+          {{show}}
+        </li>
+      </ul>
+    </div>
     <h2>Watch live</h2>
     <div v-if="url" class="flex-col flex-col-6 text-center">
       <div class="alert alert-info">
@@ -11,8 +22,6 @@
       <a v-for="(channel, index) in dvbChannels"
         v-bind:key="index"
         class="col-3 btn channel"
-        data-toggle="modal"
-        data-target="#tvLinkModal"
         v-on:click="url = streamBaseUrl + index"
       >
         {{channel.name}}
@@ -30,6 +39,9 @@ export default {
     };
   },
   computed: {
+    recordedShows() {
+      return this.$store.state.records;
+    },
     dvbChannels() {
       return this.$store.state.dvb.channels;
     },
@@ -39,6 +51,7 @@ export default {
   },
   created() {
     this.$store.dispatch('updateDvbStatus');
+    this.$store.dispatch('loadSchedule');
   },
 };
 </script>
